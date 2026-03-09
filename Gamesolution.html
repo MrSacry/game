@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>mastery2solution</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN2GGEg="
+        crossorigin=""></script>
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Hot and Cold</h1>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by x</p>
+        <p>Click on the map and use clues from the popups to find the hidden location.</p>
+    </footer>
+
+    <script>
+    var options = {
+            center: [40, 40],
+            zoom: 2
+    }
+    
+    var map = L.map('map', options);
+        
+    var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+    });
+    map.addLayer(tiles);
+          
+    var zooMarker = L.latLng(41.224727, -95.928568);
+        
+    var markers = L.layerGroup().addTo(map); 
+        
+    map.on('click', function(e){ 
+        markers.clearLayers(); 
+       
+        var clickCoord = e.latlng; 
+        var marker = L.marker(clickCoord);
+        marker.addTo(markers);
+       
+        var miles = calcDistance(zooMarker, clickCoord);
+       
+        if (miles > 8000) {
+            marker.bindPopup("You're very very cold").openPopup();
+        } else if (miles > 5000) {
+            marker.bindPopup("You're very cold").openPopup();
+        } else if (miles > 1000) {
+            marker.bindPopup("You're still cold but getting warmer").openPopup();
+        } else if (miles > 500) {
+            marker.bindPopup("You're getting warmer").openPopup();
+        } else if (miles > 100) {
+            marker.bindPopup("You're getting much warmer").openPopup();
+        } else if (miles > 50) {
+            marker.bindPopup("You're getting much much warmer").openPopup();
+        } else if (miles > 10) {
+            marker.bindPopup("You're very hot!").openPopup();
+        } else if (miles < 10) {
+            markers.clearLayers();
+            var zMarker = L.marker(zooMarker).addTo(map);
+            zMarker.bindPopup("You found it! You've arrived at the Henry Doorly Zoo and Aquarium").openPopup();
+        }
+    });
+    
+    function calcDistance(goal, click) {  
+        return goal.distanceTo(click) / 1609.34;
+    }
+    </script>
+    
+</body>
+
+</html>
